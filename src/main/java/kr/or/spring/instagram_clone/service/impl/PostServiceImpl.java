@@ -18,7 +18,7 @@ import kr.or.spring.instagram_clone.service.PostService;
 @Service
 public class PostServiceImpl implements PostService{
 	@Autowired
-	PostDao guestbookDao;
+	PostDao postDao;
 	
 	@Autowired
 	LogDao logDao;
@@ -26,14 +26,14 @@ public class PostServiceImpl implements PostService{
 	@Override
 	@Transactional
 	public List<Post> getPosts(Integer start) {
-		List<Post> list = guestbookDao.selectAll(start, PostService.LIMIT);
+		List<Post> list = postDao.selectAll(start, PostService.LIMIT);
 		return list;
 	}
 
 	@Override
 	@Transactional(readOnly=false)
 	public int deletePost(Long id, String ip) {
-		int deleteCount = guestbookDao.deleteById(id);
+		int deleteCount = postDao.deleteById(id);
 		Log log = new Log();
 		log.setIp(ip);
 		log.setMethod("delete");
@@ -47,7 +47,9 @@ public class PostServiceImpl implements PostService{
 	public Post addPost(Post post, String ip, String image) {
 		post.setDate(new Date());
 		post.setImage(image);
-		Long id = guestbookDao.insert(post);
+
+		Long id = postDao.insert(post);
+
 		post.setPostId(id);
 		
 		Log log = new Log();
@@ -61,7 +63,7 @@ public class PostServiceImpl implements PostService{
 
 	@Override
 	public int getCount() {
-		return guestbookDao.selectCount();
+		return postDao.selectCount();
 	}
 	
 	

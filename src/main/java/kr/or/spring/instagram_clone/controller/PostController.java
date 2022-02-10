@@ -1,7 +1,10 @@
 package kr.or.spring.instagram_clone.controller;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,26 +105,49 @@ public class PostController {
 	public String write(@ModelAttribute Post post,
 						HttpServletRequest request,
 						@RequestParam("file") MultipartFile file) {
+		
+//		String path = "c:/image";
+//		File Folder = new File(path);
+//		if (!Folder.exists()) {
+//			try{
+//			    Folder.mkdir(); //폴더 생성
+//		    } catch(Exception e){
+//		    	e.getStackTrace();
+//			}        
+//	    }
+		
+//		String path = "c:/tmp/".concat(file.getOriginalFilename());
+		String path = "C:/Users/고민영/Desktop/instagram-clone/instagram-clone/src/main/webapp/resources/img/"+file.getOriginalFilename();
+		
 		String clientIp = request.getRemoteAddr();
 		System.out.println("clientIp : " + clientIp);
 		postService.addPost(post, clientIp, file.getOriginalFilename());
-		
-		System.out.println("파일 이름 : " + file.getOriginalFilename());   
+
+		System.out.println("파일 이름 : " + file.getOriginalFilename());
 		System.out.println("파일 크기 : " + file.getSize());
+		System.out.println(path);
 		
         try(
-                FileOutputStream fos = new FileOutputStream("C:/Users/고민영/Desktop/instagram-clone/instagram-clone/src/main/webapp/resources/img/" + file.getOriginalFilename());
+
+                // 맥일 경우 
+                //FileOutputStream fos = new FileOutputStream("/tmp/" + file.getOriginalFilename());
+                // 윈도우일 경우
+                FileOutputStream fos = new FileOutputStream(path);
+
+
                 InputStream is = file.getInputStream();
         ){
         	    int readCount = 0;
         	    byte[] buffer = new byte[1024];
             while((readCount = is.read(buffer)) != -1){
                 fos.write(buffer,0,readCount);
+                
+                
             }
         }catch(Exception ex){
             throw new RuntimeException("file Save Error");
-        
         }
+		
 		return "redirect:list";
 	}
         
